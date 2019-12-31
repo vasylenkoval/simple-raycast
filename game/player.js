@@ -12,7 +12,8 @@ import {
 } from './constants.js';
 
 export default class Player {
-    constructor() {
+    constructor(gameMap) {
+        this.gameMap = gameMap;
         this.x = PLAYER_INITIAL_POSITION.x;
         this.y = PLAYER_INITIAL_POSITION.y;
         this.turnDirection = PLAYER_TURN_DIRECTION.still;
@@ -49,24 +50,33 @@ export default class Player {
         }
     }
 
+    checkCollisions(x, y) {
+        const currentRow = Math.floor(x / this.gameMap.tileSize);
+        const currentColumn = Math.floor(y / this.gameMap.tileSize);
+        return !!this.gameMap.grid[currentColumn][currentRow];
+    }
+
     update() {
-        if (this.walkDirection === PLAYER_WALK_DIRECTION.forward) {
-            this.x += Math.cos(this.rotationAngle) * this.moveIncrement;
-            this.y += Math.sin(this.rotationAngle) * this.moveIncrement;
+        // updating rotation angle
+        this.rotationAngle += this.rotationIncrement * this.turnDirection;
+
+        // calculating future coordinates
+        const newX =
+            this.x + Math.cos(this.rotationAngle) * this.moveIncrement * this.walkDirection;
+        const newY =
+            this.y + Math.sin(this.rotationAngle) * this.moveIncrement * this.walkDirection;
+
+        // checking if new values will collide with map walls before updating
+        if (!this.checkCollisions(newX, newY)) {
+            this.x = newX;
+            this.y = newY;
+            return;
         }
 
-        if (this.walkDirection === PLAYER_WALK_DIRECTION.back) {
-            this.x -= Math.cos(this.rotationAngle) * this.moveIncrement;
-            this.y -= Math.sin(this.rotationAngle) * this.moveIncrement;
-        }
-
-        if (this.turnDirection === PLAYER_TURN_DIRECTION.right) {
-            this.rotationAngle += this.rotationIncrement;
-        }
-
-        if (this.turnDirection === PLAYER_TURN_DIRECTION.left) {
-            this.rotationAngle -= this.rotationIncrement;
-        }
+        // if collisions were detected check if we can increment just one axis
+        // to allow sliding along the map wall
+        this.x = this.checkCollisions(newX, this.y) ? this.x : newX;
+        this.y = this.checkCollisions(this.x, newY) ? this.y : newY;
     }
 
     render() {
@@ -83,5 +93,7 @@ export default class Player {
             this.y + Math.sin(this.rotationAngle) * PLAYER_LINE_LENGTH
         );
         stroke(DEFAULT_STROKE_COLOR);
+
+        this.update();
     }
 }

@@ -1,8 +1,10 @@
-import { MAP_INITIAL_GRID, MAP_TILE_SIZE, MAP_TILE_COLORS } from './constants.js';
+import { MAP_INITIAL_GRID, MAP_TILE_SIZE, MAP_TILE_COLORS, MAP_DIMS } from './constants.js';
 
 export default class Map {
     constructor() {
         this.grid = MAP_INITIAL_GRID;
+        this.tileSize = MAP_TILE_SIZE;
+        this.dims = MAP_DIMS;
     }
 
     render() {

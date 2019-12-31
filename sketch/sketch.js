@@ -1,18 +1,14 @@
-import { CANVAS_DIMS, CANVAS_BACKGROUND_COLOR } from './constants.js';
+import { CANVAS_BACKGROUND_COLOR } from './constants.js';
 import Map from '../game/map.js';
 import Player from '../game/player.js';
 
 // initializing game objects
 const gameMap = new Map();
-const player = new Player();
+const player = new Player(gameMap);
 
 function setup() {
-    createCanvas(CANVAS_DIMS.width, CANVAS_DIMS.height);
+    createCanvas(gameMap.dims.columns * gameMap.tileSize, gameMap.dims.rows * gameMap.tileSize);
     background(CANVAS_BACKGROUND_COLOR);
-}
-
-function update() {
-    player.update();
 }
 
 function keyPressed() {
@@ -32,7 +28,6 @@ function keyReleased() {
 function draw() {
     gameMap.render();
     player.render();
-    update();
 }
 // since we're using es6 modules, we have to expose main p5 functions to global scope
 // in order for p5 library to see it
