@@ -63,9 +63,6 @@ export default class Player {
 
     onShoot() {
         this.bullets.push({ x: this.x, y: this.y, rotationAngle: this.rotationAngle });
-        let rotationInDeg = (this.rotationAngle / FULL_CIRCLE) * 360;
-
-        console.log('ROTATION', rotationInDeg);
     }
 
     update() {
@@ -92,14 +89,19 @@ export default class Player {
                     Math.sin(bullet.rotationAngle) * -1,
                     Math.cos(bullet.rotationAngle)
                 );
-            }
-
-            if (!this.gameMap.checkCollisions(bullet.x, newBulletY)) {
+            } else {
                 rotationAngle = Math.atan2(
                     Math.sin(bullet.rotationAngle),
                     Math.cos(bullet.rotationAngle) * -1
                 );
             }
+
+            // if (!this.gameMap.checkCollisions(bullet.x, newBulletY)) {
+            //     rotationAngle = Math.atan2(
+            //         Math.sin(bullet.rotationAngle),
+            //         Math.cos(bullet.rotationAngle) * -1
+            //     );
+            // }
 
             return {
                 x: bullet.x,
