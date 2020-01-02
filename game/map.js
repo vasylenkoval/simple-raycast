@@ -7,6 +7,12 @@ export default class Map {
         this.dims = MAP_DIMS;
     }
 
+    checkCollisions(x, y) {
+        const currentRow = Math.floor(x / this.tileSize);
+        const currentColumn = Math.floor(y / this.tileSize);
+        return !!this.grid[currentColumn][currentRow];
+    }
+
     render() {
         this.grid.forEach((row = [], rowNum) =>
             row.forEach((tile, tileNum) => {

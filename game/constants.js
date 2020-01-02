@@ -1,3 +1,5 @@
+export const FULL_CIRCLE = 2 * Math.PI;
+
 // map
 export const MAP_INITIAL_GRID = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -46,10 +48,17 @@ export const PLAYER_DEFAULT_ROTATION_ANGLE = 1.5 * Math.PI;
 
 export const PLAYER_DEFAULT_MOVE_INCREMENT = 3;
 
-export const PLAYER_DEFAULT_ROTATION_INCREMENT = 1 * (Math.PI / 180);
+export const PLAYER_DEFAULT_ROTATION_INCREMENT = 3 * (Math.PI / 180);
 
-export const PLAYER_LINE_LENGTH = 80;
+export const PLAYER_LINE_LENGTH = 40;
 
 export const PLAYER_COLOR = 'red';
+
+// bullets
+export const BULLET_COLOR = 'blue';
+
+export const BULLET_RADIUS = 7;
+
+export const BULLET_DEFAULT_MOVE_INCREMENT = 3;
 
 export const DEFAULT_STROKE_COLOR = 'black';
