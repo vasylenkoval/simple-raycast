@@ -9,8 +9,8 @@ export default class Map {
     }
 
     checkCollisions(x, y) {
-        const currentRow = Math.floor(x / this.tileSize);
-        const currentColumn = Math.floor(y / this.tileSize);
+        const currentRow = Math.floor(Math.abs(x - 1) / this.tileSize);
+        const currentColumn = Math.floor(Math.abs(y - 1) / this.tileSize);
         return this.grid[currentColumn][currentRow] !== 0;
     }
 
