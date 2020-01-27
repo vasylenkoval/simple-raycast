@@ -96,13 +96,6 @@ export default class Player {
                 );
             }
 
-            // if (!this.gameMap.checkCollisions(bullet.x, newBulletY)) {
-            //     rotationAngle = Math.atan2(
-            //         Math.sin(bullet.rotationAngle),
-            //         Math.cos(bullet.rotationAngle) * -1
-            //     );
-            // }
-
             return {
                 x: bullet.x,
                 y: bullet.y,

@@ -9,9 +9,29 @@ export default class Map {
     }
 
     checkCollisions(x, y) {
-        const currentRow = Math.floor(Math.abs(x - 1) / this.tileSize);
-        const currentColumn = Math.floor(Math.abs(y - 1) / this.tileSize);
-        return this.grid[currentColumn][currentRow] !== 0;
+        const isXEven = x % this.tileSize === 0;
+        const isYEven = y % this.tileSize === 0;
+
+        let currentRow = Math.floor(x / this.tileSize);
+        let currentColumn = Math.floor(y / this.tileSize);
+
+        if (this.grid[currentColumn][currentRow] === 1) {
+            return true;
+        }
+
+        // If we haven't detected a collision yet, but either x or y coordinate was
+        // right on the tile edge, let's check if that edge belongs to a non empty tile.
+        // This can happen only if player is looking up, hence only checking one tile above.
+
+        if (isYEven && currentColumn - 1 >= 0 && this.grid[currentColumn - 1][currentRow] === 1) {
+            return true;
+        }
+
+        if (isXEven && currentRow - 1 >= 0 && this.grid[currentColumn][currentRow - 1] === 1) {
+            return true;
+        }
+
+        return false;
     }
 
     onKeyPress(keyCode) {
