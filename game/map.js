@@ -11,9 +11,24 @@ export default class Map {
     checkCollisions(x, y) {
         const isXEven = x % this.tileSize === 0;
         const isYEven = y % this.tileSize === 0;
+        const maxRows = this.dims.rows;
+        const maxColumns = this.dims.columns;
 
         let currentRow = Math.floor(x / this.tileSize);
         let currentColumn = Math.floor(y / this.tileSize);
+
+        console.log('ROW', currentRow);
+        console.log('COL', currentColumn);
+
+        // Returning early if one of the rows/columns is already out of boundaries
+        if (
+            currentRow >= maxRows ||
+            currentColumn >= maxColumns ||
+            currentRow < 0 ||
+            currentColumn < 0
+        ) {
+            return true;
+        }
 
         if (this.grid[currentColumn][currentRow] === 1) {
             return true;
