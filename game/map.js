@@ -14,11 +14,11 @@ export default class Map {
         const maxRows = this.dims.rows;
         const maxColumns = this.dims.columns;
 
-        let currentRow = Math.floor(x / this.tileSize);
-        let currentColumn = Math.floor(y / this.tileSize);
+        let currentColumn = Math.floor(x / this.tileSize);
+        let currentRow = Math.floor(y / this.tileSize);
 
-        console.log('ROW', currentRow);
-        console.log('COL', currentColumn);
+        console.log('ROW', maxRows);
+        console.log('COL', maxColumns);
 
         // Returning early if one of the rows/columns is already out of boundaries
         if (
@@ -30,7 +30,7 @@ export default class Map {
             return true;
         }
 
-        if (this.grid[currentColumn][currentRow] === 1) {
+        if (this.grid[currentRow][currentColumn] === 1) {
             return true;
         }
 
@@ -38,11 +38,11 @@ export default class Map {
         // right on the tile edge, let's check if that edge belongs to a non empty tile.
         // This can happen only if player is looking up, hence only checking one tile above.
 
-        if (isYEven && currentColumn - 1 >= 0 && this.grid[currentColumn - 1][currentRow] === 1) {
+        if (isYEven && currentRow - 1 >= 0 && this.grid[currentRow - 1][currentColumn] === 1) {
             return true;
         }
 
-        if (isXEven && currentRow - 1 >= 0 && this.grid[currentColumn][currentRow - 1] === 1) {
+        if (isXEven && currentColumn - 1 >= 0 && this.grid[currentRow][currentColumn - 1] === 1) {
             return true;
         }
 
