@@ -1,24 +1,23 @@
-import { MAP_INITIAL_GRID, MAP_TILE_SIZE, MAP_TILE_COLORS, MAP_DIMS } from './constants.js';
+import { MAP_TILE_COLORS } from './constants.js';
+import { generateMapGrid } from '../utils/helpers.js';
 
 export default class Map {
-    constructor() {
-        this.grid = MAP_INITIAL_GRID;
-        this.tileSize = MAP_TILE_SIZE;
-        this.dims = MAP_DIMS;
-        this.editMode = false;
+    constructor({ gridRows = 20, gridColumns = 20, tileSize = 25 }) {
+        this.grid = generateMapGrid(gridRows, gridColumns);
+        this.dims = { rows: gridRows, columns: gridColumns };
+        this.tileSize = tileSize;
+        this.isEditModeActive = false;
     }
 
     checkCollisions(x, y) {
-        const isXEven = x % this.tileSize === 0;
-        const isYEven = y % this.tileSize === 0;
+        const isXEdge = x % this.tileSize === 0;
+        const isYEdge = y % this.tileSize === 0;
+
         const maxRows = this.dims.rows;
         const maxColumns = this.dims.columns;
 
         let currentColumn = Math.floor(x / this.tileSize);
         let currentRow = Math.floor(y / this.tileSize);
-
-        console.log('ROW', maxRows);
-        console.log('COL', maxColumns);
 
         // Returning early if one of the rows/columns is already out of boundaries
         if (
@@ -38,11 +37,11 @@ export default class Map {
         // right on the tile edge, let's check if that edge belongs to a non empty tile.
         // This can happen only if player is looking up, hence only checking one tile above.
 
-        if (isYEven && currentRow - 1 >= 0 && this.grid[currentRow - 1][currentColumn] === 1) {
+        if (isYEdge && currentRow - 1 >= 0 && this.grid[currentRow - 1][currentColumn] === 1) {
             return true;
         }
 
-        if (isXEven && currentColumn - 1 >= 0 && this.grid[currentRow][currentColumn - 1] === 1) {
+        if (isXEdge && currentColumn - 1 >= 0 && this.grid[currentRow][currentColumn - 1] === 1) {
             return true;
         }
 
@@ -51,7 +50,7 @@ export default class Map {
 
     onKeyPress(keyCode) {
         const onKeyPressActionsMap = {
-            [CONTROL]: () => (this.editMode = !this.editMode),
+            [CONTROL]: () => (this.isEditModeActive = !this.isEditModeActive),
         };
 
         if (onKeyPressActionsMap[keyCode]) {
@@ -60,7 +59,7 @@ export default class Map {
     }
 
     onMousePress() {
-        if (!this.editMode) {
+        if (!this.isEditModeActive) {
             return false;
         }
 
@@ -77,12 +76,12 @@ export default class Map {
     render() {
         this.grid.forEach((row = [], rowNum) =>
             row.forEach((tile, tileNum) => {
-                const upperLeftX = tileNum * MAP_TILE_SIZE;
-                const upperLeftY = rowNum * MAP_TILE_SIZE;
+                const upperLeftX = tileNum * this.tileSize;
+                const upperLeftY = rowNum * this.tileSize;
                 const tileColor = tile ? MAP_TILE_COLORS.tile : MAP_TILE_COLORS.noTile;
 
                 fill(tileColor);
-                rect(upperLeftX, upperLeftY, MAP_TILE_SIZE, MAP_TILE_SIZE);
+                rect(upperLeftX, upperLeftY, this.tileSize, this.tileSize);
             })
         );
     }

@@ -5,8 +5,11 @@ import RayCaster from '../raycaster/raycaster.js';
 
 // initializing game objects
 const gameMap = new Map();
+const windowWidth = gameMap.dims.columns * gameMap.tileSize;
+const windowHeight = gameMap.dims.rows * gameMap.tileSize;
+
 const player = new Player(gameMap);
-const rayCaster = new RayCaster({ player, gameMap });
+const rayCaster = new RayCaster({ player, gameMap, windowWidth, windowHeight });
 
 function setup() {
     createCanvas(gameMap.dims.columns * gameMap.tileSize, gameMap.dims.rows * gameMap.tileSize);

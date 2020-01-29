@@ -6,14 +6,21 @@ export default class Ray {
         this.tileSize = tileSize;
     }
 
-    getDistance(gameMap) {
+    getClosestIntercept(gameMap) {
         const hIntercept = this.findHorizontalIntercept(gameMap);
-        this.findVerticalIntercept(gameMap);
-        const distanceToIntercept = Math.sqrt(
+        const vIntercept = this.findVerticalIntercept(gameMap);
+
+        const hInterceptDistance = Math.sqrt(
             Math.pow(this.x - hIntercept.x, 2) + Math.pow(this.y - hIntercept.y, 2)
         );
 
-        return distanceToIntercept;
+        const vInterceptDistance = Math.sqrt(
+            Math.pow(this.x - vIntercept.x, 2) + Math.pow(this.y - vIntercept.y, 2)
+        );
+
+        return hInterceptDistance < vInterceptDistance
+            ? { x: hIntercept.x, y: hIntercept.y, distance: hInterceptDistance }
+            : { x: vIntercept.x, y: vIntercept.y, distance: vInterceptDistance };
     }
 
     findHorizontalIntercept(gameMap) {
@@ -27,8 +34,6 @@ export default class Ray {
         const firstInterceptX = isFacingUp
             ? this.x + (firstInterceptY - this.y) / Math.tan(this.angle)
             : this.x - (this.y - firstInterceptY) / Math.tan(this.angle);
-
-        // circle(firstInterceptX, firstInterceptY, 5);
 
         // Checking if we have a hit at the first intercept
         if (gameMap.checkCollisions(firstInterceptX, firstInterceptY)) {
@@ -44,7 +49,6 @@ export default class Ray {
 
         let incrementX = firstInterceptX + stepX;
         let incrementY = firstInterceptY + stepY;
-        // circle(incrementX, incrementY, 7);
 
         while (
             incrementX <= maxX &&
@@ -55,7 +59,6 @@ export default class Ray {
         ) {
             incrementX += stepX;
             incrementY += stepY;
-            // circle(incrementX, incrementY, 10);
         }
 
         return { x: incrementX, y: incrementY };
@@ -73,8 +76,6 @@ export default class Ray {
             ? this.y + (firstInterceptX - this.x) * Math.tan(this.angle)
             : this.y - (this.x - firstInterceptX) * Math.tan(this.angle);
 
-        circle(firstInterceptX, firstInterceptY, 5);
-
         // Checking if we have a hit at the first intercept
         if (gameMap.checkCollisions(firstInterceptX, firstInterceptY)) {
             return { x: firstInterceptX, y: firstInterceptY };
@@ -89,7 +90,6 @@ export default class Ray {
 
         let incrementX = firstInterceptX + stepX;
         let incrementY = firstInterceptY + stepY;
-        circle(incrementX, incrementY, 7);
 
         while (
             incrementX <= maxX &&
@@ -100,7 +100,6 @@ export default class Ray {
         ) {
             incrementX += stepX;
             incrementY += stepY;
-            circle(incrementX, incrementY, 10);
         }
         return { x: incrementX, y: incrementY };
     }

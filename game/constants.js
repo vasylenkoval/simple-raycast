@@ -1,30 +1,13 @@
+// Generic
 export const FULL_CIRCLE = 2 * Math.PI;
 
-// map
-export const MAP_INITIAL_GRID = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-];
-
-export const MAP_TILE_SIZE = 32;
-
-export const MAP_DIMS = { rows: MAP_INITIAL_GRID.length, columns: MAP_INITIAL_GRID[0].length };
-
+// Map
 export const MAP_TILE_COLORS = {
     tile: '#fff',
     noTile: '#222',
 };
 
-// player
+// Player
 export const PLAYER_INITIAL_POSITION = {
     x: (MAP_DIMS.columns * MAP_TILE_SIZE) / 2,
     y: (MAP_DIMS.rows * MAP_TILE_SIZE) / 2,

@@ -1,4 +1,4 @@
-import { FOV, DEFAULT_PIXELS_PER_RAY } from './constants.js';
+import { FOV, DEFAULT_PIXELS_PER_RAY, FULL_CIRCLE } from './constants.js';
 import Ray from './ray.js';
 
 export default class RayCaster {
@@ -10,38 +10,27 @@ export default class RayCaster {
         this.fov = FOV;
         this.pixelsPerRay = DEFAULT_PIXELS_PER_RAY;
         this.fovAngleIncrement = (this.fov / this.windowWidth) * this.pixelsPerRay;
-        this.rays = [...new Array(Math.floor(this.windowWidth / this.pixelsPerRay))];
+        this.rays = [];
     }
 
     castRays() {
-        const ray = new Ray(
-            this.player.x,
-            this.player.y,
-            this.player.rotationAngle,
-            this.gameMap.tileSize
-        );
+        // Setting ray angle to the value of the first ray
+        const adjustedFOVRayAngle = this.player.rotationAngle - this.fov / 2;
+        let rayAngle =
+            adjustedFOVRayAngle > 0
+                ? adjustedFOVRayAngle % FULL_CIRCLE
+                : (FULL_CIRCLE + adjustedFOVRayAngle) % FULL_CIRCLE;
 
-        const distance = ray.getDistance(this.gameMap);
-        console.log(distance);
+        const numRays = this.windowWidth / this.pixelsPerRay;
+        const rayAngleIncrement = this.fov / numRays;
 
-        // const initialAngle = this.player.rotationAngle - this.fov / 2;
+        this.rays = [];
 
-        // this.rays = this.rays.map((_, index) => {
-        //     const ray = new Ray(
-        //         this.player.x,
-        //         this.player.y,
-        //         initialAngle + index * this.fovAngleIncrement,
-        //         this.gameMap.tileSize
-        //     );
+        for (let i = 0; i < numRays; i++) {
+            this.rays.push(new Ray(this.player.x, this.player.y, rayAngle, this.gameMap.tileSize));
 
-        //     const distance = ray.getDistance(this.gameMap);
-        //     console.log(distance);
-        // });
-
-        // this.rays = this.rays.map((_, index) => ({
-        //     x: this.player.x + Math.cos(initialAngle + index * this.fovAngleIncrement) * 200,
-        //     y: this.player.y + Math.sin(initialAngle + index * this.fovAngleIncrement) * 200,
-        // }));
+            rayAngle = (rayAngle + rayAngleIncrement) % FULL_CIRCLE;
+        }
     }
 
     update() {
@@ -51,10 +40,22 @@ export default class RayCaster {
     render() {
         this.update();
 
-        // stroke('rgba(255, 255, 255, 0.5)');
-        // this.rays.forEach((ray = {}) => {
-        //     line(this.player.x, this.player.y, ray.x, ray.y);
-        // });
-        // stroke('black');
+        this.rays.forEach((ray, index) => {
+            const intercept = ray.getClosestIntercept(this.gameMap);
+            const rayLength = (this.windowHeight / intercept.distance) * 10;
+            const rayX = this.pixelsPerRay * index;
+            const rayY = (this.windowHeight - rayLength) / 2;
+
+            stroke(`rgba(255, 255, 255, ${rayLength / this.windowHeight})`);
+            strokeWeight(this.pixelsPerRay);
+            line(rayX, rayY, rayX, rayY + rayLength);
+
+            // temporary 2d rays visualization
+            strokeWeight(1);
+            stroke('red');
+            line(this.player.x, this.player.y, intercept.x, intercept.y);
+        });
+        strokeWeight(1);
+        stroke('black');
     }
 }
