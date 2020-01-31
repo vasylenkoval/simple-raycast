@@ -61,7 +61,8 @@ export default class RayCaster {
         this.rays.forEach((ray, index) => {
             const intercept = ray.getClosestIntercept();
 
-            const rayLength = (this.windowHeight / intercept.distance) * 10;
+            const tileValue = this.gameMap.getTileValue(intercept.x, intercept.y);
+            const rayLength = (this.windowHeight / intercept.distance) * tileValue * 10;
             const rayX = this.pixelsPerRay * index;
             const rayY = (this.windowHeight - rayLength) / 2;
 
@@ -69,9 +70,13 @@ export default class RayCaster {
             strokeWeight(this.pixelsPerRay);
             line(rayX, rayY, rayX, rayY + rayLength);
 
+            if (index === 50) {
+                // console.log(blockHeight);
+            }
+
             // temporary 2d rays visualization
-            strokeWeight(1);
-            stroke('red');
+            // strokeWeight(1);
+            // stroke('red');
             line(this.player.x, this.player.y, intercept.x, intercept.y);
         });
         strokeWeight(1);
