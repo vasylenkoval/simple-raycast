@@ -1,14 +1,20 @@
 export default class Ray {
-    constructor(x, y, angle, tileSize) {
+    constructor(args = {}) {
+        const { x, y, angle, tileSize, maxX, maxY, onCheckCollisions } = args;
+
         this.x = x;
         this.y = y;
         this.angle = angle;
         this.tileSize = tileSize;
+        this.maxY = maxY;
+        this.maxX = maxX;
+
+        this.onCheckCollisions = onCheckCollisions;
     }
 
-    getClosestIntercept(gameMap) {
-        const hIntercept = this.findHorizontalIntercept(gameMap);
-        const vIntercept = this.findVerticalIntercept(gameMap);
+    getClosestIntercept() {
+        const hIntercept = this.findHorizontalIntercept();
+        const vIntercept = this.findVerticalIntercept();
 
         const hInterceptDistance = Math.sqrt(
             Math.pow(this.x - hIntercept.x, 2) + Math.pow(this.y - hIntercept.y, 2)
@@ -23,7 +29,7 @@ export default class Ray {
             : { x: vIntercept.x, y: vIntercept.y, distance: vInterceptDistance };
     }
 
-    findHorizontalIntercept(gameMap) {
+    findHorizontalIntercept() {
         const isFacingUp = this.angle > Math.PI;
 
         // X and Y of the first horizontal line intercept
@@ -36,7 +42,7 @@ export default class Ray {
             : this.x - (this.y - firstInterceptY) / Math.tan(this.angle);
 
         // Checking if we have a hit at the first intercept
-        if (gameMap.checkCollisions(firstInterceptX, firstInterceptY)) {
+        if (this.onCheckCollisions(firstInterceptX, firstInterceptY)) {
             return { x: firstInterceptX, y: firstInterceptY };
         }
 
@@ -44,18 +50,15 @@ export default class Ray {
         const stepY = isFacingUp ? -this.tileSize : this.tileSize;
         const stepX = stepY / Math.tan(this.angle);
 
-        const maxY = gameMap.dims.rows * this.tileSize;
-        const maxX = gameMap.dims.columns * this.tileSize;
-
         let incrementX = firstInterceptX + stepX;
         let incrementY = firstInterceptY + stepY;
 
         while (
-            incrementX <= maxX &&
-            incrementY <= maxY &&
+            incrementX <= this.maxX &&
+            incrementY <= this.maxY &&
             incrementX >= 0 &&
             incrementY >= 0 &&
-            !gameMap.checkCollisions(incrementX, incrementY)
+            !this.onCheckCollisions(incrementX, incrementY)
         ) {
             incrementX += stepX;
             incrementY += stepY;
@@ -64,7 +67,7 @@ export default class Ray {
         return { x: incrementX, y: incrementY };
     }
 
-    findVerticalIntercept(gameMap) {
+    findVerticalIntercept() {
         const isFacingRight = this.angle > 1.5 * Math.PI || this.angle < Math.PI / 2;
         // X and Y of the first vertical line intercept
 
@@ -77,7 +80,7 @@ export default class Ray {
             : this.y - (this.x - firstInterceptX) * Math.tan(this.angle);
 
         // Checking if we have a hit at the first intercept
-        if (gameMap.checkCollisions(firstInterceptX, firstInterceptY)) {
+        if (this.onCheckCollisions(firstInterceptX, firstInterceptY)) {
             return { x: firstInterceptX, y: firstInterceptY };
         }
 
@@ -85,18 +88,15 @@ export default class Ray {
         const stepX = isFacingRight ? this.tileSize : -this.tileSize;
         const stepY = stepX * Math.tan(this.angle);
 
-        const maxY = gameMap.dims.rows * this.tileSize;
-        const maxX = gameMap.dims.columns * this.tileSize;
-
         let incrementX = firstInterceptX + stepX;
         let incrementY = firstInterceptY + stepY;
 
         while (
-            incrementX <= maxX &&
-            incrementY <= maxY &&
+            incrementX <= this.maxX &&
+            incrementY <= this.maxY &&
             incrementX >= 0 &&
             incrementY >= 0 &&
-            !gameMap.checkCollisions(incrementX, incrementY)
+            !this.onCheckCollisions(incrementX, incrementY)
         ) {
             incrementX += stepX;
             incrementY += stepY;

@@ -1,23 +1,38 @@
-import { MAP_TILE_COLORS } from './constants.js';
 import { generateMapGrid } from '../utils/helpers.js';
 
+const DEFAULT_MAP_GRID_ROWS = 20;
+const DEFAULT_MAP_GRID_COLUMNS = 20;
+const DEFAULT_MAP_TILE_SIZE = 25;
+export const DEFAULT_MAP_TILE_COLORS = {
+    tile: '#fff',
+    noTile: '#222',
+};
+
 export default class Map {
-    constructor({ gridRows = 20, gridColumns = 20, tileSize = 25 }) {
+    constructor(args = {}) {
+        const {
+            gridRows = DEFAULT_MAP_GRID_ROWS,
+            gridColumns = DEFAULT_MAP_GRID_COLUMNS,
+            tileSize = DEFAULT_MAP_TILE_SIZE,
+            tileColors = DEFAULT_MAP_TILE_COLORS,
+        } = args;
+
         this.grid = generateMapGrid(gridRows, gridColumns);
-        this.dims = { rows: gridRows, columns: gridColumns };
-        this.tileSize = tileSize;
+        this.dims = { rows: gridRows, columns: gridColumns, tileSize: tileSize };
+        this.tileColors = tileColors;
+
         this.isEditModeActive = false;
     }
 
-    checkCollisions(x, y) {
-        const isXEdge = x % this.tileSize === 0;
-        const isYEdge = y % this.tileSize === 0;
+    checkCollisions = (x, y) => {
+        const isXEdge = x % this.dims.tileSize === 0;
+        const isYEdge = y % this.dims.tileSize === 0;
 
         const maxRows = this.dims.rows;
         const maxColumns = this.dims.columns;
 
-        let currentColumn = Math.floor(x / this.tileSize);
-        let currentRow = Math.floor(y / this.tileSize);
+        let currentColumn = Math.floor(x / this.dims.tileSize);
+        let currentRow = Math.floor(y / this.dims.tileSize);
 
         // Returning early if one of the rows/columns is already out of boundaries
         if (
@@ -46,9 +61,9 @@ export default class Map {
         }
 
         return false;
-    }
+    };
 
-    onKeyPress(keyCode) {
+    onKeyPress = keyCode => {
         const onKeyPressActionsMap = {
             [CONTROL]: () => (this.isEditModeActive = !this.isEditModeActive),
         };
@@ -56,32 +71,38 @@ export default class Map {
         if (onKeyPressActionsMap[keyCode]) {
             onKeyPressActionsMap[keyCode]();
         }
-    }
+    };
 
-    onMousePress() {
+    onMousePress = () => {
         if (!this.isEditModeActive) {
             return false;
         }
 
-        const selectedRow = Math.floor(mouseX / this.tileSize);
-        const selectedColumn = Math.floor(mouseY / this.tileSize);
+        const selectedRow = Math.floor(mouseX / this.dims.tileSize);
+        const selectedColumn = Math.floor(mouseY / this.dims.tileSize);
         const currentValue = this.grid[selectedColumn][selectedRow];
 
         this.grid[selectedColumn][selectedRow] = currentValue === 0 ? 1 : 0;
 
         // returning false to prevent browser's default behaviour
         return false;
-    }
+    };
+
+    getWindowSize = () => ({
+        windowWidth: this.dims.columns * this.dims.tileSize,
+        windowHeight: this.dims.rows * this.dims.tileSize,
+    });
 
     render() {
         this.grid.forEach((row = [], rowNum) =>
             row.forEach((tile, tileNum) => {
-                const upperLeftX = tileNum * this.tileSize;
-                const upperLeftY = rowNum * this.tileSize;
-                const tileColor = tile ? MAP_TILE_COLORS.tile : MAP_TILE_COLORS.noTile;
+                const upperLeftX = tileNum * this.dims.tileSize;
+                const upperLeftY = rowNum * this.dims.tileSize;
+
+                const tileColor = tile ? this.tileColors.tile : this.tileColors.noTile;
 
                 fill(tileColor);
-                rect(upperLeftX, upperLeftY, this.tileSize, this.tileSize);
+                rect(upperLeftX, upperLeftY, this.dims.tileSize, this.dims.tileSize);
             })
         );
     }

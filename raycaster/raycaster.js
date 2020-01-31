@@ -1,37 +1,55 @@
-import { FOV, DEFAULT_PIXELS_PER_RAY, FULL_CIRCLE } from './constants.js';
 import Ray from './ray.js';
+import { calcAngleIncrement } from '../utils/helpers.js';
+
+const DEFAULT_PIXELS_PER_RAY = 2;
+const DEFAULT_FOV = Math.PI / 2; // 90 deg
 
 export default class RayCaster {
-    constructor({ player, gameMap, windowWidth = 320, windowHeight = 200 } = {}) {
+    constructor(args = {}) {
+        const {
+            pixelsPerRay = DEFAULT_PIXELS_PER_RAY,
+            fov = DEFAULT_FOV,
+
+            // required args
+            gridDims,
+            player,
+            gameMap,
+        } = args;
+
         this.player = player;
         this.gameMap = gameMap;
-        this.windowWidth = windowWidth;
-        this.windowHeight = windowHeight;
-        this.fov = FOV;
-        this.pixelsPerRay = DEFAULT_PIXELS_PER_RAY;
+        this.gridDims = gridDims;
+        this.windowWidth = this.gridDims.columns * gridDims.tileSize;
+        this.windowHeight = this.gridDims.rows * gridDims.tileSize;
+
+        this.fov = fov;
+        this.pixelsPerRay = pixelsPerRay;
         this.fovAngleIncrement = (this.fov / this.windowWidth) * this.pixelsPerRay;
+
         this.rays = [];
     }
 
-    castRays() {
-        // Setting ray angle to the value of the first ray
-        const adjustedFOVRayAngle = this.player.rotationAngle - this.fov / 2;
-        let rayAngle =
-            adjustedFOVRayAngle > 0
-                ? adjustedFOVRayAngle % FULL_CIRCLE
-                : (FULL_CIRCLE + adjustedFOVRayAngle) % FULL_CIRCLE;
-
+    castRays = () => {
         const numRays = this.windowWidth / this.pixelsPerRay;
-        const rayAngleIncrement = this.fov / numRays;
+        let rayAngle = calcAngleIncrement(this.player.angle, -(this.fov / 2));
 
         this.rays = [];
 
         for (let i = 0; i < numRays; i++) {
-            this.rays.push(new Ray(this.player.x, this.player.y, rayAngle, this.gameMap.tileSize));
-
-            rayAngle = (rayAngle + rayAngleIncrement) % FULL_CIRCLE;
+            this.rays.push(
+                new Ray({
+                    x: this.player.x,
+                    y: this.player.y,
+                    angle: rayAngle,
+                    tileSize: this.gridDims.tileSize,
+                    maxY: this.windowHeight,
+                    maxX: this.windowWidth,
+                    onCheckCollisions: this.gameMap.checkCollisions,
+                })
+            );
+            rayAngle = calcAngleIncrement(rayAngle, this.fov / numRays);
         }
-    }
+    };
 
     update() {
         this.castRays();
@@ -41,7 +59,8 @@ export default class RayCaster {
         this.update();
 
         this.rays.forEach((ray, index) => {
-            const intercept = ray.getClosestIntercept(this.gameMap);
+            const intercept = ray.getClosestIntercept();
+
             const rayLength = (this.windowHeight / intercept.distance) * 10;
             const rayX = this.pixelsPerRay * index;
             const rayY = (this.windowHeight - rayLength) / 2;
