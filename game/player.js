@@ -105,8 +105,8 @@ export default class Player {
     }
 
     render() {
-        fill(DEFAULT_PLAYER_COLOR);
-        circle(this.x, this.y, this.playerRadius);
+        // fill(DEFAULT_PLAYER_COLOR);
+        // circle(this.x, this.y, this.playerRadius);
 
         for (const bullet of this.bullets) {
             bullet.render();

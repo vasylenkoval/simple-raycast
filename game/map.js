@@ -84,7 +84,8 @@ export default class Map {
         const selectedColumn = Math.floor(mouseY / this.dims.tileSize);
         const currentValue = this.grid[selectedColumn][selectedRow];
 
-        this.grid[selectedColumn][selectedRow] = currentValue === 0 ? 1 : 0;
+        this.grid[selectedColumn][selectedRow] =
+            currentValue > 5 ? 0 : this.grid[selectedColumn][selectedRow] + 0.5;
 
         // returning false to prevent browser's default behaviour
         return false;
@@ -98,13 +99,11 @@ export default class Map {
     render() {
         this.grid.forEach((row = [], rowNum) =>
             row.forEach((tile, tileNum) => {
-                const upperLeftX = tileNum * this.dims.tileSize;
-                const upperLeftY = rowNum * this.dims.tileSize;
-
-                const tileColor = tile ? this.tileColors.tile : this.tileColors.noTile;
-
-                fill(tileColor);
-                rect(upperLeftX, upperLeftY, this.dims.tileSize, this.dims.tileSize);
+                // const upperLeftX = tileNum * this.dims.tileSize;
+                // const upperLeftY = rowNum * this.dims.tileSize;
+                // const tileColor = tile ? this.tileColors.tile : this.tileColors.noTile;
+                // fill(tileColor);
+                // rect(upperLeftX, upperLeftY, this.dims.tileSize, this.dims.tileSize);
             })
         );
     }

@@ -25,8 +25,8 @@ export default class Ray {
         );
 
         return hInterceptDistance < vInterceptDistance
-            ? { x: hIntercept.x, y: hIntercept.y, distance: hInterceptDistance }
-            : { x: vIntercept.x, y: vIntercept.y, distance: vInterceptDistance };
+            ? { x: hIntercept.x, y: hIntercept.y, distance: hInterceptDistance, angle: this.angle }
+            : { x: vIntercept.x, y: vIntercept.y, distance: vInterceptDistance, angle: this.angle };
     }
 
     findHorizontalIntercept() {

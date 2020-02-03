@@ -32,3 +32,10 @@ export function calcAngleIncrement(angle, increment) {
 
     return (FULL_CIRCLE + incrementedAngle) % FULL_CIRCLE;
 }
+
+// adjustRayFishBowlEffect calculates the projected ray length by taking the adjacent side length instead of hypotenuses
+export function adjustRayDistanceForFishBowlEffect(playerAngle, rayAngle, rayDistance) {
+    const angle = calcAngleIncrement(rayAngle, -playerAngle);
+
+    return Math.cos(angle) * rayDistance;
+}

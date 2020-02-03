@@ -1,5 +1,5 @@
 import Ray from './ray.js';
-import { calcAngleIncrement } from '../utils/helpers.js';
+import { calcAngleIncrement, adjustRayDistanceForFishBowlEffect } from '../utils/helpers.js';
 
 const DEFAULT_PIXELS_PER_RAY = 2;
 const DEFAULT_FOV = Math.PI / 2; // 90 deg
@@ -56,30 +56,38 @@ export default class RayCaster {
     }
 
     render() {
-        this.update();
-
+        clear();
         this.rays.forEach((ray, index) => {
             const intercept = ray.getClosestIntercept();
+            const adjustedDistance = adjustRayDistanceForFishBowlEffect(
+                this.player.angle,
+                intercept.angle,
+                intercept.distance
+            );
 
-            const tileValue = this.gameMap.getTileValue(intercept.x, intercept.y);
-            const rayLength = (this.windowHeight / intercept.distance) * tileValue * 10;
+            const tileMultiplier = this.gameMap.getTileValue(intercept.x, intercept.y);
+
+            const scalar = 10;
+            const rawLength = (this.windowHeight / adjustedDistance) * scalar;
+
             const rayX = this.pixelsPerRay * index;
-            const rayY = (this.windowHeight - rayLength) / 2;
 
-            stroke(`rgba(255, 255, 255, ${rayLength / this.windowHeight})`);
+            const rayYBottom = this.windowHeight - (this.windowHeight - rawLength) / 2;
+            const rayYTop = rayYBottom - rawLength * tileMultiplier;
+
+            stroke(`rgba(255, 255, 255, ${rawLength / this.windowHeight})`);
             strokeWeight(this.pixelsPerRay);
-            line(rayX, rayY, rayX, rayY + rayLength);
 
-            if (index === 50) {
-                // console.log(blockHeight);
-            }
+            line(rayX, rayYTop, rayX, rayYBottom);
 
             // temporary 2d rays visualization
             // strokeWeight(1);
             // stroke('red');
-            line(this.player.x, this.player.y, intercept.x, intercept.y);
+            // line(this.player.x, this.player.y, intercept.x, intercept.y);
         });
         strokeWeight(1);
         stroke('black');
+
+        this.update();
     }
 }
