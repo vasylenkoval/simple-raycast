@@ -6,8 +6,8 @@ import RayCaster from '../raycaster/raycaster.js';
 const CANVAS_BACKGROUND_COLOR = 220;
 
 // Map
-const MAP_GRID_ROWS = 20;
-const MAP_GRID_COLUMNS = 20;
+const MAP_GRID_ROWS = 15;
+const MAP_GRID_COLUMNS = 35;
 const MAP_TILE_SIZE = 25;
 
 // Initializing game objects

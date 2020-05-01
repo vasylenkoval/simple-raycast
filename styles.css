@@ -1,8 +1,17 @@
-html {
-    width: 800px;
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-canvas {
-    border: 1px solid black;
-    margin: 0 auto;
+.p5Canvas {
+    transform: scale(2);
+}
+
+.text {
+    color: white;
+    position: absolute;
+    top: 50;
+    left: 50;
 }

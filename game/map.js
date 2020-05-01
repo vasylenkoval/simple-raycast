@@ -65,7 +65,7 @@ export default class Map {
 
     checkCollisions = (x, y) => !!this.getTileValue(x, y);
 
-    onKeyPress = keyCode => {
+    onKeyPress = (keyCode) => {
         const onKeyPressActionsMap = {
             [CONTROL]: () => (this.isEditModeActive = !this.isEditModeActive),
         };
@@ -99,11 +99,11 @@ export default class Map {
     render() {
         this.grid.forEach((row = [], rowNum) =>
             row.forEach((tile, tileNum) => {
-                // const upperLeftX = tileNum * this.dims.tileSize;
-                // const upperLeftY = rowNum * this.dims.tileSize;
-                // const tileColor = tile ? this.tileColors.tile : this.tileColors.noTile;
-                // fill(tileColor);
-                // rect(upperLeftX, upperLeftY, this.dims.tileSize, this.dims.tileSize);
+                const upperLeftX = tileNum * this.dims.tileSize;
+                const upperLeftY = rowNum * this.dims.tileSize;
+                const tileColor = tile ? this.tileColors.tile : this.tileColors.noTile;
+                fill(tileColor);
+                rect(upperLeftX, upperLeftY, this.dims.tileSize, this.dims.tileSize);
             })
         );
     }

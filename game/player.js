@@ -48,7 +48,7 @@ export default class Player {
         this.onCheckCollisions = onCheckCollisions;
     }
 
-    onKeyPress = keyCode => {
+    onKeyPress = (keyCode) => {
         const onKeyPressActionsMap = {
             [UP_ARROW]: () => (this.walkDirection = PLAYER_WALK_DIRECTION.forward),
             [DOWN_ARROW]: () => (this.walkDirection = PLAYER_WALK_DIRECTION.back),
@@ -62,7 +62,7 @@ export default class Player {
         }
     };
 
-    onKeyRelease = keyCode => {
+    onKeyRelease = (keyCode) => {
         const onKeyReleaseActionsMap = {
             [UP_ARROW]: () => (this.walkDirection = PLAYER_WALK_DIRECTION.still),
             [DOWN_ARROW]: () => (this.walkDirection = PLAYER_WALK_DIRECTION.still),
@@ -105,8 +105,8 @@ export default class Player {
     }
 
     render() {
-        // fill(DEFAULT_PLAYER_COLOR);
-        // circle(this.x, this.y, this.playerRadius);
+        fill(DEFAULT_PLAYER_COLOR);
+        circle(this.x, this.y, this.playerRadius);
 
         for (const bullet of this.bullets) {
             bullet.render();
