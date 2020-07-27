@@ -1,12 +1,12 @@
 body {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
 .p5Canvas {
     transform: scale(2);
+    border: 1px solid red;
 }
 
 .text {

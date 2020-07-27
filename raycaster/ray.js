@@ -12,24 +12,18 @@ export default class Ray {
         this.onCheckCollisions = onCheckCollisions;
     }
 
-    getClosestIntercept() {
-        const hIntercept = this.findHorizontalIntercept();
-        const vIntercept = this.findVerticalIntercept();
-
-        const hInterceptDistance = Math.sqrt(
-            Math.pow(this.x - hIntercept.x, 2) + Math.pow(this.y - hIntercept.y, 2)
-        );
-
-        const vInterceptDistance = Math.sqrt(
-            Math.pow(this.x - vIntercept.x, 2) + Math.pow(this.y - vIntercept.y, 2)
-        );
-
-        return hInterceptDistance < vInterceptDistance
-            ? { x: hIntercept.x, y: hIntercept.y, distance: hInterceptDistance, angle: this.angle }
-            : { x: vIntercept.x, y: vIntercept.y, distance: vInterceptDistance, angle: this.angle };
+    getIntercepts() {
+        return [...this.findHorizontalIntercepts(), ...this.findVerticalIntercepts()]
+            .map(({ x, y } = {}) => ({
+                x,
+                y,
+                distance: Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2)),
+                angle: this.angle,
+            }))
+            .sort((a, b) => a.distance < b.distance);
     }
 
-    findHorizontalIntercept() {
+    findHorizontalIntercepts() {
         const isFacingUp = this.angle > Math.PI;
 
         // X and Y of the first horizontal line intercept
@@ -41,9 +35,11 @@ export default class Ray {
             ? this.x + (firstInterceptY - this.y) / Math.tan(this.angle)
             : this.x - (this.y - firstInterceptY) / Math.tan(this.angle);
 
+        const intercepts = [];
+
         // Checking if we have a hit at the first intercept
         if (this.onCheckCollisions(firstInterceptX, firstInterceptY)) {
-            return { x: firstInterceptX, y: firstInterceptY };
+            intercepts.push({ x: firstInterceptX, y: firstInterceptY });
         }
 
         // Finding constant step values to be able to go through all intercepts
@@ -57,17 +53,20 @@ export default class Ray {
             incrementX <= this.maxX &&
             incrementY <= this.maxY &&
             incrementX >= 0 &&
-            incrementY >= 0 &&
-            !this.onCheckCollisions(incrementX, incrementY)
+            incrementY >= 0
         ) {
+            if (this.onCheckCollisions(incrementX, incrementY)) {
+                intercepts.push({ x: incrementX, y: incrementY });
+            }
+
             incrementX += stepX;
             incrementY += stepY;
         }
 
-        return { x: incrementX, y: incrementY };
+        return intercepts;
     }
 
-    findVerticalIntercept() {
+    findVerticalIntercepts() {
         const isFacingRight = this.angle > 1.5 * Math.PI || this.angle < Math.PI / 2;
         // X and Y of the first vertical line intercept
 
@@ -79,9 +78,11 @@ export default class Ray {
             ? this.y + (firstInterceptX - this.x) * Math.tan(this.angle)
             : this.y - (this.x - firstInterceptX) * Math.tan(this.angle);
 
+        const intercepts = [];
+
         // Checking if we have a hit at the first intercept
         if (this.onCheckCollisions(firstInterceptX, firstInterceptY)) {
-            return { x: firstInterceptX, y: firstInterceptY };
+            intercepts.push({ x: firstInterceptX, y: firstInterceptY });
         }
 
         // Finding constant step values to be able to go through all intercepts
@@ -95,12 +96,16 @@ export default class Ray {
             incrementX <= this.maxX &&
             incrementY <= this.maxY &&
             incrementX >= 0 &&
-            incrementY >= 0 &&
-            !this.onCheckCollisions(incrementX, incrementY)
+            incrementY >= 0
         ) {
+            if (this.onCheckCollisions(incrementX, incrementY)) {
+                intercepts.push({ x: incrementX, y: incrementY });
+            }
+
             incrementX += stepX;
             incrementY += stepY;
         }
-        return { x: incrementX, y: incrementY };
+
+        return intercepts;
     }
 }

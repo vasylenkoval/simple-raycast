@@ -24,7 +24,7 @@ export default class Map {
         this.isEditModeActive = false;
     }
 
-    getTileValue = (x, y) => {
+    getTileHeight = (x, y) => {
         const isXEdge = x % this.dims.tileSize === 0;
         const isYEdge = y % this.dims.tileSize === 0;
 
@@ -49,7 +49,7 @@ export default class Map {
         }
 
         // If we haven't detected a collision yet, but either x or y coordinate was
-        // right on the tile edge, let's check if that edge belongs to a non empty tile.
+        // right on the tile edge, let's check if that edge belongs to a non-empty tile.
         // This can happen only if player is looking up, hence only checking one tile above.
 
         if (isYEdge && currentRow - 1 >= 0 && this.grid[currentRow - 1][currentColumn] !== 0) {
@@ -63,7 +63,7 @@ export default class Map {
         return 0;
     };
 
-    checkCollisions = (x, y) => !!this.getTileValue(x, y);
+    checkCollisions = (x, y) => !!this.getTileHeight(x, y); // only triggering for tiles that have height
 
     onKeyPress = (keyCode) => {
         const onKeyPressActionsMap = {
@@ -90,11 +90,6 @@ export default class Map {
         // returning false to prevent browser's default behaviour
         return false;
     };
-
-    getWindowSize = () => ({
-        windowWidth: this.dims.columns * this.dims.tileSize,
-        windowHeight: this.dims.rows * this.dims.tileSize,
-    });
 
     render() {
         this.grid.forEach((row = [], rowNum) =>

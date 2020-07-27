@@ -10,13 +10,16 @@ const MAP_GRID_ROWS = 15;
 const MAP_GRID_COLUMNS = 35;
 const MAP_TILE_SIZE = 25;
 
+// Resolution
+const VERTICAL_RES = 360;
+const HORIZONTAL_RES = 640;
+
 // Initializing game objects
 const gameMap = new Map({
     gridRows: MAP_GRID_ROWS,
     gridColumns: MAP_GRID_COLUMNS,
     tileSize: MAP_TILE_SIZE,
 });
-const { windowHeight, windowWidth } = gameMap.getWindowSize();
 
 const player = new Player({
     onCheckCollisions: gameMap.checkCollisions,
@@ -25,13 +28,15 @@ const player = new Player({
 });
 
 const rayCaster = new RayCaster({
+    windowWidth: HORIZONTAL_RES,
+    windowHeight: VERTICAL_RES,
     gridDims: gameMap.dims,
     player,
     gameMap,
 });
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    createCanvas(HORIZONTAL_RES, VERTICAL_RES);
     background(CANVAS_BACKGROUND_COLOR);
 }
 

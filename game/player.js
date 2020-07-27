@@ -16,6 +16,7 @@ const DEFAULT_PLAYER_ROTATION_ANGLE = 1.5 * Math.PI;
 const DEFAULT_PLAYER_MOVE_INCREMENT = 3;
 const DEFAULT_PLAYER_ROTATION_INCREMENT = 3 * (Math.PI / 180);
 const DEFAULT_PLAYER_COLOR = 'red';
+const DEFAULT_PLAYER_ALTITUDE = 1;
 
 export default class Player {
     constructor(args = {}) {
@@ -24,6 +25,7 @@ export default class Player {
             angle = DEFAULT_PLAYER_ROTATION_ANGLE,
             moveIncrement = DEFAULT_PLAYER_MOVE_INCREMENT,
             rotationIncrement = DEFAULT_PLAYER_ROTATION_INCREMENT,
+            initialAltitude = DEFAULT_PLAYER_ALTITUDE,
 
             // required args
             onCheckCollisions,
@@ -37,6 +39,7 @@ export default class Player {
         this.angle = angle;
         this.rotationIncrement = rotationIncrement;
         this.moveIncrement = moveIncrement;
+        this.altitude = initialAltitude;
 
         this.playerRadius = playerRadius;
 
@@ -54,7 +57,9 @@ export default class Player {
             [DOWN_ARROW]: () => (this.walkDirection = PLAYER_WALK_DIRECTION.back),
             [RIGHT_ARROW]: () => (this.turnDirection = PLAYER_TURN_DIRECTION.right),
             [LEFT_ARROW]: () => (this.turnDirection = PLAYER_TURN_DIRECTION.left),
-            [SHIFT]: () => this.onShoot(),
+            // [SHIFT]: () => this.onShoot(),
+            [TAB]: () => this.changeAltitude(1),
+            [SHIFT]: () => this.changeAltitude(-1),
         };
 
         if (onKeyPressActionsMap[keyCode]) {
@@ -84,6 +89,8 @@ export default class Player {
                 onCheckCollisions: this.onCheckCollisions,
             })
         );
+
+    changeAltitude = (value) => (this.altitude += value);
 
     update() {
         this.angle = calcAngleIncrement(this.angle, this.rotationIncrement * this.turnDirection);
