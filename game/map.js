@@ -3,6 +3,7 @@ import { generateMapGrid } from '../utils/helpers.js';
 const DEFAULT_MAP_GRID_ROWS = 20;
 const DEFAULT_MAP_GRID_COLUMNS = 20;
 const DEFAULT_MAP_TILE_SIZE = 25;
+
 export const DEFAULT_MAP_TILE_COLORS = {
     tile: '#fff',
     noTile: '#222',
@@ -63,7 +64,15 @@ export default class Map {
         return 0;
     };
 
-    checkCollisions = (x, y) => !!this.getTileHeight(x, y); // only triggering for tiles that have height
+    checkCollisions = (x, y, z) => {
+        // if height is passed, check if nothing is blocking at that altitude
+        if (z) {
+            return Math.floor(z) <= this.getTileHeight(x, y);
+        }
+
+        // else just return block value, if anything other than 0 - collide
+        return !!this.getTileHeight(x, y);
+    };
 
     onKeyPress = (keyCode) => {
         const onKeyPressActionsMap = {

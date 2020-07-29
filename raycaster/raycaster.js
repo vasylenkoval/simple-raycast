@@ -62,41 +62,44 @@ export default class RayCaster {
     render() {
         clear();
 
-        this.rays.forEach((ray, index) =>
-            ray.getIntercepts().forEach((intercept = {}) => {
+        this.rays.forEach((ray, rayIdx) => {
+            let prevIntercept = {};
+
+            ray.getIntercepts().forEach((intercept = {}, interceptIdx) => {
                 const distance = adjustRayDistanceForFishBowlEffect(
                     this.player.angle,
                     intercept.angle,
                     intercept.distance
                 );
 
-                // Getting the height value of the tile (some tiles are higher than default ones)
+                // Getting the height value of the tile
                 const heightMultiplier = this.gameMap.getTileHeight(intercept.x, intercept.y);
-
-                // Faking the height difference by deriving different multipliers
-                // for everything below and above the horizon
                 const horizon = this.windowHeight / 2;
 
-                // Since player altitude start with 0, we have to offset
-                const bottomHeightMultiplier = this.player.altitude + 1;
-                const topHeightMultiplier = heightMultiplier - this.player.altitude + 1;
+                // Calculating raw length of the stroke, 10 is a random scaling multiplier
+                const rawLength = (this.windowHeight / distance) * heightMultiplier * 10;
 
-                // Calculating raw length of the stroke, 20 is a random scaling multiplier
-                // const rawLength = (this.windowHeight / distance) * 20;
-                const rawLength = (this.windowHeight / distance) * 10;
+                const aboveHorizonLength =
+                    (rawLength / heightMultiplier) * (heightMultiplier - this.player.z);
 
                 // Coordinate system in p5 starts with 0,0 at the top left corner
-                const rayX = this.pixelsPerRay * index;
-
-                const rayYBottom = horizon + (rawLength / 2) * bottomHeightMultiplier;
-                const rayYTop = rayYBottom - rawLength * topHeightMultiplier;
+                const rayX = this.pixelsPerRay * rayIdx;
+                const rayYTop = horizon - aboveHorizonLength;
+                const rayYBottom = rayYTop + rawLength;
 
                 stroke(`rgba(255, 255, 255, 0.5)`);
                 strokeWeight(this.pixelsPerRay);
 
                 line(rayX, rayYTop, rayX, rayYBottom);
-            })
-        );
+
+                // drawing a connection line between each pair of intercepts
+                // if (interceptIdx % 2 == 0) {
+                //     prevIntercept = { rayX, rayYTop, rayX, rayYBottom };
+                // } else {
+                //     line(rayX, rayYTop, prevIntercept.rayX, prevIntercept.rayYTop);
+                // }
+            });
+        });
 
         // temporary 2d rays visualization
         // strokeWeight(1);

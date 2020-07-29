@@ -12,7 +12,7 @@ export default class Bullet {
             moveIncrement = DEFAULT_BULLET_MOVE_INCREMENT,
 
             // required args
-            onCheckCollisions,
+            checkCollisions,
         } = args;
 
         this.x = x;
@@ -20,20 +20,20 @@ export default class Bullet {
         this.angle = angle;
         this.radius = radius;
         this.moveIncrement = moveIncrement;
-        this.onCheckCollisions = onCheckCollisions;
+        this.checkCollisions = checkCollisions;
     }
 
     update() {
         const newBulletX = this.x + Math.cos(this.angle) * this.moveIncrement;
         const newBulletY = this.y + Math.sin(this.angle) * this.moveIncrement;
 
-        if (!this.onCheckCollisions(newBulletX, newBulletY)) {
+        if (!this.checkCollisions(newBulletX, newBulletY)) {
             this.x = newBulletX;
             this.y = newBulletY;
             return;
         }
 
-        if (!this.onCheckCollisions(newBulletX, this.y)) {
+        if (!this.checkCollisions(newBulletX, this.y)) {
             this.angle = Math.atan2(Math.sin(this.angle) * -1, Math.cos(this.angle));
         } else {
             this.angle = Math.atan2(Math.sin(this.angle), Math.cos(this.angle) * -1);

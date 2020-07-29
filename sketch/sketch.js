@@ -22,7 +22,7 @@ const gameMap = new Map({
 });
 
 const player = new Player({
-    onCheckCollisions: gameMap.checkCollisions,
+    checkCollisions: gameMap.checkCollisions,
     initialX: 45,
     initialY: 45,
 });

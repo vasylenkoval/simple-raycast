@@ -8,7 +8,7 @@ export function generateMapGrid(rows, columns, hasOuterWalls = true) {
     if (hasOuterWalls) {
         grid = grid.map((row, index, arr) => {
             if (index === 0 || index === arr.length - 1) {
-                return [...new Array(columns).fill(2)];
+                return [...new Array(columns).fill(7)];
             }
             return row.map((column, index, arr) => {
                 if (index === 0 || index === arr.length - 1) {
